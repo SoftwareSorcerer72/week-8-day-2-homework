@@ -2055,7 +2055,36 @@
         {
             "language": "typescript",
             "source": [
-                "abstract class Character {\r\n    constructor(public name: string, public gold: number = 0) {}\r\n\r\n    abstract attack(): void;\r\n    abstract defend(): void;\r\n\r\n    collectGold(amount: number): void {\r\n        this.gold += amount;\r\n        console.log(`${this.name} collected ${amount} gold. Total gold: ${this.gold}`);\r\n    }\r\n}\r\n\r\nclass Ogre extends Character {\r\n    attack(): void {\r\n        console.log(`${this.name} attacks with a club.`);\r\n    }\r\n\r\n    defend(): void {\r\n        console.log(`${this.name} defends with a shield.`);\r\n    }\r\n}\r\n\r\nclass Knight extends Character {\r\n    attack(): void {\r\n        console.log(`${this.name} attacks with a sword.`);\r\n    }\r\n\r\n    defend(): void {\r\n        console.log(`${this.name} defends with armor.`);\r\n    }\r\n}\r\n\r\n// Usage\r\nlet ogre = new Ogre('Ogre Bob');\r\nogre.attack();\r\nogre.defend();\r\nogre.collectGold(100);\r\n\r\nlet knight = new Knight('Knight Steve');\r\nknight.attack();\r\nknight.defend();\r\nknight.collectGold(200);"
+                "interface AttackStrategy {\r\n    attack(): void;\r\n}\r\n\r\ninterface DefenseStrategy {\r\n    defend(): void;\r\n}\r\n\r\n\r\nclass ClubAttack implements AttackStrategy {\r\n    attack(): void {\r\n        console.log(\"Attacks with a club.\");\r\n    }\r\n}\r\n\r\nclass SwordAttack implements AttackStrategy {\r\n    attack(): void {\r\n        console.log(\"Attacks with a sword.\");\r\n    }\r\n}\r\n\r\nclass BowAndArrowAttack implements AttackStrategy {\r\n    attack(): void {\r\n        console.log(\"Attacks with a bow and arrow.\");\r\n    }\r\n}\r\n\r\nclass ShieldDefense implements DefenseStrategy {\r\n    defend(): void {\r\n        console.log(\"Defends with a shield.\");\r\n    }\r\n}\r\n\r\nclass ArmorDefense implements DefenseStrategy {\r\n    defend(): void {\r\n        console.log(\"Defends with armor.\");\r\n    }\r\n}\r\n\r\nclass TunicDefense implements DefenseStrategy {\r\n    defend(): void {\r\n        console.log(\"Has only a tunic for protection.\");\r\n    }\r\n}\r\nabstract class Character {\r\n    protected attackStrategy: AttackStrategy;\r\n    protected defenseStrategy: DefenseStrategy;\r\n\r\n    constructor(public name: string, public gold: number = 0, attackStrategy: AttackStrategy, defenseStrategy: DefenseStrategy) {\r\n        this.attackStrategy = attackStrategy;\r\n        this.defenseStrategy = defenseStrategy;\r\n    }\r\n\r\n    attack(): void {\r\n        this.attackStrategy.attack();\r\n    }\r\n\r\n    defend(): void {\r\n        this.defenseStrategy.defend();\r\n    }\r\n\r\n    setAttackStrategy(newStrategy: AttackStrategy): void {\r\n        this.attackStrategy = newStrategy;\r\n    }\r\n\r\n    setDefenseStrategy(newStrategy: DefenseStrategy): void {\r\n        this.defenseStrategy = newStrategy;\r\n    }\r\n\r\n    collectGold(amount: number): void {\r\n        this.gold += amount;\r\n        console.log(`${this.name} collected ${amount} gold. Total gold: ${this.gold}`);\r\n    }\r\n}\r\nclass Ogre extends Character {\r\n    constructor(name: string, gold: number = 0) {\r\n        super(name, gold, new ClubAttack(), new ShieldDefense());\r\n    }\r\n}\r\n\r\nclass Peon extends Character {\r\n    constructor(name: string, gold: number = 0) {\r\n        super(name, gold, new ClubAttack(), new ShieldDefense());\r\n    }\r\n}\r\n\r\nclass Knight extends Character {\r\n    constructor(name: string, gold: number = 0) {\r\n        super(name, gold, new SwordAttack(), new ArmorDefense());\r\n    }\r\n}\r\n\r\nclass Archer extends Character {\r\n    constructor(name: string, gold: number = 0) {\r\n        super(name, gold, new BowAndArrowAttack(), new TunicDefense());\r\n    }\r\n}\r\nlet ogre = new Ogre('Balgar the Fierce');\r\nconsole.log(`${ogre.name} starts the battle:`);\r\nogre.attack();\r\nogre.defend();\r\nogre.collectGold(100);\r\n\r\nlet knight = new Knight('Jurgen the Brave');\r\nconsole.log(`${knight.name} enters the fray:`);\r\nknight.attack();\r\nknight.defend();\r\nconsole.log(`${knight.name} finds a club on the battlefield.`);\r\nknight.setAttackStrategy(new ClubAttack()); // Changing attack strategy dynamically\r\nknight.attack();\r\nknight.collectGold(200);\r\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Balgar the Fierce starts the battle:",
+                                "Attacks with a club.",
+                                "Defends with a shield.",
+                                "Balgar the Fierce collected 100 gold. Total gold: 100",
+                                "Jurgen the Brave enters the fray:",
+                                "Attacks with a sword.",
+                                "Defends with armor.",
+                                "Jurgen the Brave finds a club on the battlefield.",
+                                "Attacks with a club.",
+                                "Jurgen the Brave collected 200 gold. Total gold: 200",
+                                "",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "Usage Example"
             ],
             "outputs": []
         }
